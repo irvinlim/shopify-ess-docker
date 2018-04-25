@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require "/ess/run/run"
+require "/ess/run/colors"
+
+# Executes the script either from file or stdin.
+script_name = ARGV.size > 0 ? ARGV[0] : "/dev/stdin"
+
+puts "Executing script from #{script_name}..\n".blue
+
+result = run(script_name)
+quotas = get_quotas
+
+# Display results to the terminal.
+if result.errors.size > 0
+  puts "Errors encountered while executing the script:".red
+  for error in result.errors
+    puts error.to_s
+  end
+  puts ""
+end
+
+if result.stdout and result.stdout != "(can't read stdout)"
+  puts "Received stdout:".yellow
+  puts result.stdout
+  puts ""
+end
+
+if result.output
+  puts "Extracted output:".yellow
+  puts result.output
+  puts ""
+end
+
+puts "Quota usage:".green
+puts "Instructions: #{result.stat.total_instructions}/#{quotas['instruction']}"
+puts "Memory: #{result.stat.memory}/#{quotas['memory']} bytes"

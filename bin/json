@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+
+require "/ess/run/run"
+require "json"
+
+script_name = ARGV.size > 0 ? ARGV[0] : nil
+result = run(script_name)
+
+# Recursively convert Struct to Hash.
+hashify = lambda do |struct|
+  hash = struct.to_h
+  keys = hash.select { |_, v| v.is_a? Struct }.map(&:first)
+  keys.each { |key| hash[key] = hashify.(hash[key]) }
+  hash
+end
+
+puts hashify.(result).to_json
