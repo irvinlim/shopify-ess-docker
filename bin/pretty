@@ -20,7 +20,7 @@ if result.errors.size > 0
   puts ""
 end
 
-if result.stdout and result.stdout != "(can't read stdout)"
+if result.stdout.length > 0 and result.stdout != "(can't read stdout)"
   puts "Received stdout:".yellow
   puts result.stdout
   puts ""
